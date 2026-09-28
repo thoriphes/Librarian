@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <!-- Own block / line templates: ObjectiveTrackerManager keeps one frame pool per template,
+         so our blocks never go back into the pools Blizzard's quest blocks are drawn from. -->
+    <Frame name="LibrarianTrackerBlockTemplate" inherits="ObjectiveTrackerBlockTemplate" virtual="true"/>
+    <Frame name="LibrarianTrackerLineTemplate" inherits="ObjectiveTrackerLineTemplate" virtual="true"/>
+</Ui>

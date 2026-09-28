@@ -1,0 +1,33 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <!-- World map pin. The map's pin pool needs the pin methods before AcquirePin calls them,
+         so OnLoad (run at creation) mixes in Librarian.PinMixin - no global mixin name. -->
+    <Button name="LibrarianBookPinTemplate" virtual="true">
+        <Size x="22" y="22"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Glow" file="Interface\Buttons\UI-ActionButton-Border" alphaMode="ADD" hidden="true">
+                    <Size x="46" y="46"/>
+                    <Anchors><Anchor point="CENTER"/></Anchors>
+                </Texture>
+            </Layer>
+            <!-- Border = a filled square behind the inset icon, so it reads as a 2 px frame. -->
+            <Layer level="BORDER">
+                <Texture parentKey="Border" file="Interface\Buttons\WHITE8X8">
+                    <Anchors><Anchor point="TOPLEFT"/><Anchor point="BOTTOMRIGHT"/></Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="2" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+                    </Anchors>
+                    <TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>Mixin(self, Librarian.PinMixin)</OnLoad>
+        </Scripts>
+    </Button>
+</Ui>

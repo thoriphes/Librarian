@@ -1,0 +1,32 @@
+## Interface: 16001
+## Title: Librarian
+## Notes: Library books tracker for WoW Forever: journal, map pins, zone toast, tracker section.
+## Notes-esES: Seguimiento de los libros de la biblioteca de WoW Forever: diario, mapa, avisos y seguimiento de objetivos.
+## Notes-esMX: Seguimiento de los libros de la biblioteca de WoW Forever: diario, mapa, avisos y seguimiento de objetivos.
+## Author: thoriphes
+## Version: @project-version@
+## X-License: MIT
+## X-Website: https://github.com/thoriphes/Librarian
+## IconTexture: Interface\Icons\INV_Misc_Book_12
+## SavedVariables: LibrarianDB
+## SavedVariablesPerCharacter: LibrarianCharDB
+
+Core\Init.lua
+Core\Locale.lua
+Data\Books.lua
+Data\Strings.lua
+Core\Data.lua
+Core\Status.lua
+Core\Spec.lua
+Core\Commands.lua
+Systems\Button.lua
+Systems\Waypoint.lua
+Systems\MapPins.xml
+Systems\MapPins.lua
+Systems\Toast.lua
+Systems\Tracker.xml
+Systems\Tracker.lua
+UI\SkillBar.lua
+UI\BookMap.lua
+UI\Journal.lua
+UI\Options.lua
