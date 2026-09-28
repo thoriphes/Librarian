@@ -7,6 +7,7 @@
 ## Version: @project-version@
 ## X-License: MIT
 ## X-Website: https://github.com/thoriphes/Librarian
+## X-Curse-Project-ID: 1716504
 ## IconTexture: Interface\Icons\INV_Misc_Book_12
 ## SavedVariables: LibrarianDB
 ## SavedVariablesPerCharacter: LibrarianCharDB
