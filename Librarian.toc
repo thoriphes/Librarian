@@ -1,8 +1,15 @@
 ## Interface: 16001
 ## Title: Librarian
 ## Notes: Library books tracker for WoW Forever: journal, map pins, zone toast, tracker section.
+## Notes-deDE: Bibliotheksbücher für WoW Forever: Tagebuch, Kartenmarkierungen, Zonenhinweis, Abschnitt in der Questzielverfolgung.
 ## Notes-esES: Seguimiento de los libros de la biblioteca de WoW Forever: diario, mapa, avisos y seguimiento de objetivos.
 ## Notes-esMX: Seguimiento de los libros de la biblioteca de WoW Forever: diario, mapa, avisos y seguimiento de objetivos.
+## Notes-frFR: Suivi des livres de bibliothèque pour WoW Forever : journal, repères de carte, notification de zone, section du suivi des objectifs.
+## Notes-koKR: WoW Forever 도서관 책 추적기: 도감, 지도 핀, 지역 알림, 목표 추적기 항목.
+## Notes-ptBR: Rastreador dos livros da biblioteca do WoW Forever: diário, marcadores no mapa, aviso de zona e seção no rastreador.
+## Notes-ruRU: Учет библиотечных книг для WoW Forever: журнал, метки на карте, уведомление о зоне, раздел в списке задач.
+## Notes-zhCN: WoW Forever图书馆藏书追踪：手册、地图标记、地区浮窗、目标追踪栏区块。
+## Notes-zhTW: WoW Forever圖書館書籍追蹤：日誌、地圖標記、區域通知、追蹤器區塊。
 ## Author: thoriphes
 ## Version: @project-version@
 ## X-License: MIT
@@ -13,6 +20,7 @@
 ## SavedVariablesPerCharacter: LibrarianCharDB
 
 Core\Init.lua
+Data\Locales.lua
 Core\Locale.lua
 Data\Books.lua
 Data\Strings.lua

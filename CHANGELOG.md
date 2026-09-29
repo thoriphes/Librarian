@@ -1,5 +1,11 @@
 # Librarian
 
+## 1.1.0
+
+- New languages: German, French, Korean, Brazilian Portuguese, Russian, Simplified and
+  Traditional Chinese. The whole addon is translated, including the location notes; container
+  names and book descriptions use Blizzard's own text.
+
 ## 1.0.0
 
 First release for WoW Forever.

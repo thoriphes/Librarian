@@ -27,8 +27,8 @@ ones you still need, where they are, and what you get.
 - **TomTom** waypoints when TomTom is installed; Blizzard's map pin otherwise.
 - **Automatic detection**: a book is *delivered* once its turn-in quest is completed, *in bags*
   while you carry it. Manual marks (per character) cover a turn-in the game does not report.
-- **Localised**: English and Spanish (esES / esMX). Book, quest, zone and item names come from
-  your game client.
+- **Localised**: English, German, Spanish (esES / esMX), French, Korean, Brazilian Portuguese,
+  Russian and Chinese (zhCN / zhTW). Book, quest, zone and item names come from your game client.
 
 ## Commands
 
