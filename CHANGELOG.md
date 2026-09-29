@@ -1,5 +1,10 @@
 # Librarian
 
+## 1.1.1
+
+- Book order: your own faction's zones that you have the level for now come first; the rest
+  follow by zone level as before. The order updates when you level up.
+
 ## 1.1.0
 
 - New languages: German, French, Korean, Brazilian Portuguese, Russian, Simplified and

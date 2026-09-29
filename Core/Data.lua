@@ -33,8 +33,9 @@ end
 
 -- Zones that have at least one book for this character, in three groups by zone state:
 -- Missing (any book missing) > In bags (any in the bags, none missing) > Delivered. Inside a
--- group: by zone level (the page's range, else the classic range, else the lowest book's set
--- level), then own faction's zones before contested before the other faction's, then name.
+-- group: own faction's zones whose level you have first; then by zone level (the page's range,
+-- else the classic range, else the lowest book's set level), then own faction's zones before
+-- contested before the other faction's, then name.
 local function zoneLevel(mapID)
     local z = ns.Zones[mapID]
     local lvl = z.level and tonumber(z.level:match("^(%d+)"))
@@ -57,9 +58,26 @@ local function factionRank(mapID)
     return 3
 end
 
--- The one zone order used everywhere: level first, then side, then name.
+-- UnitLevel can still read the old level during PLAYER_LEVEL_UP: the event's level wins.
+local levelUp
+local function playerLevel()
+    return math.max(levelUp or 0, UnitLevel("player") or 0)
+end
+ns:RegisterEvent("PLAYER_LEVEL_UP", function(_, level)
+    levelUp = tonumber(level)
+    ns:Fire("STATUS") -- re-sort: zones may have become reachable
+end)
+
+-- Own faction's zones you have the level for come first (Nacho, 2026-09-29).
+local function reachableOwn(mapID, lvl)
+    return factionRank(mapID) == 1 and lvl <= playerLevel()
+end
+
+-- The one zone order used everywhere: own reachable zones first, then level, side, name.
 local function zoneBefore(a, b)
     local la, lb = zoneLevel(a), zoneLevel(b)
+    local ra, rb = reachableOwn(a, la), reachableOwn(b, lb)
+    if ra ~= rb then return ra end
     if la ~= lb then return la < lb end
     local fa, fb = factionRank(a), factionRank(b)
     if fa ~= fb then return fa < fb end
