@@ -63,6 +63,7 @@ local levelUp
 local function playerLevel()
     return math.max(levelUp or 0, UnitLevel("player") or 0)
 end
+ns.PlayerLevel = playerLevel
 ns:RegisterEvent("PLAYER_LEVEL_UP", function(_, level)
     levelUp = tonumber(level)
     ns:Fire("STATUS") -- re-sort: zones may have become reachable

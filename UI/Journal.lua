@@ -522,9 +522,8 @@ end
 
 local function refreshGoals()
     local n = ns:DeliveredTotal()
-    local g2 = ns.Goals[2]
-    local top = g2 and g2.books or 20
-    home.goalBar:SetProgress(n / top)
+    local last = ns.Goals[#ns.Goals]
+    home.goalBar:SetProgress(n / (last and last.books or 20))
     home.goalText:SetText("|cffffffff" .. L["%d books delivered."]:format(n) .. "|r")
     -- right: only the next reward (the first goal not turned in), "ready" once enough are in
     local next
@@ -641,8 +640,11 @@ local function createHome()
     home.goalBar = ns:CreateSkillBar(home)
     home.goalBar:SetPoint("TOPLEFT", 0, -22)
     home.goalBar:SetPoint("RIGHT", 0, 0) -- no scrollbar beside it: full width
-    local g1, g2 = ns.Goals[1], ns.Goals[2]
-    home.goalBar:AddMark((g1 and g1.books or 10) / (g2 and g2.books or 20))
+    -- a mark per goal short of the last one (the bar's end): 10 and 20 of 25
+    local last = ns.Goals[#ns.Goals]
+    for i = 1, #ns.Goals - 1 do
+        home.goalBar:AddMark(ns.Goals[i].books / last.books)
+    end
     home.scroll, home.child = scrollArea(home)
     home.scroll:SetPoint("TOPLEFT", 0, -60)
     home.scroll:SetPoint("BOTTOMRIGHT", -24, 0)
@@ -797,7 +799,15 @@ local function refreshBook()
     -- the other books of this zone, in the home list's column width, under a title divider
     -- (a plain gold rule when there are none)
     local entries = ns:ZoneEntries(spot.map)
-    local others = #entries - 1
+    -- one card per other BOOK: a book can have two spots in one zone (The Knight and the Lady)
+    local zoneBooks, seen = {}, { [b] = true }
+    for _, o in ipairs(entries) do
+        if not seen[o.book] then
+            seen[o.book] = true
+            zoneBooks[#zoneBooks + 1] = o
+        end
+    end
+    local others = #zoneBooks
     local d = bookPage.divider
     d:ClearAllPoints()
     d:SetPoint("TOPLEFT", CARD_INSET, -y)
@@ -814,21 +824,19 @@ local function refreshBook()
     local cardW = (width - GAP * (COLS - 1)) / COLS
     local n = 0
     for _, c in ipairs(zoneCards) do c:Hide() end
-    for _, o in ipairs(entries) do
-        if o.book ~= b then
-            n = n + 1
-            local card = getZoneCard(n)
-            card.entry = o
-            card:SetWidth(cardW)
-            card:ClearAllPoints()
-            card:SetPoint("TOPLEFT", ((n - 1) % COLS) * (cardW + GAP),
-                -(y + math.floor((n - 1) / COLS) * (ZONE_CARD_H + GAP)))
-            card.icon:SetTexture(C_Item.GetItemIconByID(o.book.item) or ns.ICON)
-            card.name:SetText(ns:BookName(o.book))
-            card.state:SetText(ns:StatusText((ns:Status(o.book))))
-            card:SetLit(false)
-            card:Show()
-        end
+    for _, o in ipairs(zoneBooks) do
+        n = n + 1
+        local card = getZoneCard(n)
+        card.entry = o
+        card:SetWidth(cardW)
+        card:ClearAllPoints()
+        card:SetPoint("TOPLEFT", ((n - 1) % COLS) * (cardW + GAP),
+            -(y + math.floor((n - 1) / COLS) * (ZONE_CARD_H + GAP)))
+        card.icon:SetTexture(C_Item.GetItemIconByID(o.book.item) or ns.ICON)
+        card.name:SetText(ns:BookName(o.book))
+        card.state:SetText(ns:StatusText((ns:Status(o.book))))
+        card:SetLit(false)
+        card:Show()
     end
     if n > 0 then
         y = y + math.ceil(n / COLS) * (ZONE_CARD_H + GAP)
@@ -919,7 +927,7 @@ end
 local function getRewardRow(i)
     local r = rewardRows[i]
     if r then return r end
-    r = CreateFrame("Frame", nil, rewardsPage)
+    r = CreateFrame("Frame", nil, rewardsPage.child)
     r:SetHeight(24)
     r.text = font(r, "GameFontNormalLarge", C.title)
     r.text:SetPoint("LEFT", 0, 0)
@@ -931,12 +939,19 @@ local function getRewardRow(i)
 end
 
 local function getRewardCard(i)
-    rewardCards[i] = rewardCards[i] or newCard(rewardsPage)
+    rewardCards[i] = rewardCards[i] or newCard(rewardsPage.child)
     return rewardCards[i]
 end
 
 local function className(c)
     return LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[c] or c
+end
+
+-- The client's own "Requires Level %d" (localised), red while the character is below it.
+local function levelText(level)
+    if not level or level <= 1 then return end
+    local s = (ITEM_MIN_LEVEL or "Requires Level %d"):format(level)
+    return ns.PlayerLevel() < level and ("|cffff4040" .. s .. "|r") or s
 end
 
 -- One reward choice: item icon (its tooltip on hover), name, who it is for, and the state:
@@ -955,6 +970,7 @@ local function fillRewardChoice(card, goal, r, pick, suits)
         for _, c in ipairs(r.classes) do names[#names + 1] = className(c) end
         meta[#meta + 1] = L["Classes: %s"]:format(table.concat(names, ", "))
     end
+    meta[#meta + 1] = levelText(r.level)
     card.meta:SetText(table.concat(meta, "\n"))
     card.where:SetText("")
     local picked = pick and pick.item == r.item
@@ -974,19 +990,20 @@ local function fillRewardChoice(card, goal, r, pick, suits)
 end
 
 local function refreshRewards()
-    local width = rewardsPage:GetWidth()
+    local child = rewardsPage.child
+    local width = rewardsPage.scroll:GetWidth()
+    child:SetWidth(width)
     local cardW = (width - GAP * (COLS - 1)) / COLS
     local npc = turnInNpc()
     local delivered = ns:DeliveredTotal()
     for _, c in ipairs(rewardCards) do c:Hide() end
     for _, r in ipairs(rewardRows) do r:Hide() end
-    local y, ci = BTN_H + 12, 0
+    local y, ci = 0, 0
     local where, show = rewardsPage.where, rewardsPage.show
     if npc then
         where:SetText(L["Turn in at %s, %s"]:format(npc.name, ns:ZoneName(npc.map))
             .. ("  %.1f, %.1f"):format(npc.x, npc.y))
         show.npc = npc
-        y = y + 34
     end
     where:SetShown(npc ~= nil)
     show:SetShown(npc ~= nil)
@@ -1003,7 +1020,10 @@ local function refreshRewards()
         else
             status = "|cffffd100" .. L["%d more to go"]:format(goal.books - delivered) .. "|r"
         end
-        row.text:SetText(("%s (%d)  %s"):format(ns:QuestTitle(goal.quest, goal.title), goal.books, status))
+        -- the quest's own level requirement, until it is turned in (the ring quest needs 20, the third 30)
+        local level = not ns:GoalDone(goal) and levelText(goal.level)
+        row.text:SetText(("%s (%d)  %s"):format(ns:QuestTitle(goal.quest, goal.title), goal.books, status)
+            .. (level and ("  |cff999999-|r  " .. level) or ""))
         row:Show()
         y = y + 24 + 10
         local pick = ns:RewardPick(goal)
@@ -1024,6 +1044,7 @@ local function refreshRewards()
         for _, c in ipairs(placed) do c:SetHeight(rowH) end
         y = y + rowH + 16
     end
+    child:SetHeight(math.max(1, y))
 end
 
 local function createRewardsPage()
@@ -1045,6 +1066,10 @@ local function createRewardsPage()
     show:SetText(L["Show on Map"])
     show:SetScript("OnClick", function(self) ns:ShowOnMap(self.npc.name, self.npc) end)
     rewardsPage.show = show
+    -- the goals scroll under the librarian line (three goals no longer fit the window)
+    rewardsPage.scroll, rewardsPage.child = scrollArea(rewardsPage)
+    rewardsPage.scroll:SetPoint("TOPLEFT", 0, -(BTN_H + 46))
+    rewardsPage.scroll:SetPoint("BOTTOMRIGHT", -24, 0)
     rewardsPage:Hide()
     ns.rewardsPage = rewardsPage -- for tools/librarian-smoke.lua
 end

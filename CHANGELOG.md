@@ -1,5 +1,18 @@
 # Librarian
 
+## 1.2.0
+
+- New reward: the third Greater Friend of the Library quest (25 books, level 30) with
+  Truthseeker's Bow, Crest of Elucidation and Researcher's Night Light. The goal bar now runs
+  to 25.
+- Rewards page: shows the level each quest and item needs (red while you are below it), and
+  scrolls.
+- Field Researcher's Loop is no longer rogue-only.
+- Books found in more than one place now list every spot: The Knight and the Lady, Scourge and
+  A Study of the Light (Rumi already did). You can still loot each book once. A book with two
+  spots in one zone shows once in the toast and the tracker.
+- Updated locations and notes from the latest beta reports.
+
 ## 1.1.1
 
 - Book order: your own faction's zones that you have the level for now come first; the rest

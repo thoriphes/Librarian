@@ -63,11 +63,13 @@ function ns:ZoneBooks(mapID)
     return out
 end
 
--- Missing books in a zone (what the toast and the tracker show).
+-- Missing books in a zone (what the toast and the tracker show): one entry per book, its first
+-- spot there (a book can lie twice in one zone: The Knight and the Lady).
 function ns:ZoneMissing(mapID)
-    local out = {}
+    local out, seen = {}, {}
     for _, e in ipairs(ns:ZoneEntries(mapID)) do
-        if ns:Status(e.book) == ns.MISSING then
+        if not seen[e.book] and ns:Status(e.book) == ns.MISSING then
+            seen[e.book] = true
             table.insert(out, e)
         end
     end

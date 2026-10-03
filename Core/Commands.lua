@@ -54,7 +54,9 @@ SlashCmdList.LIBRARIAN = function(msg)
             printZone(mapID)
         end
     elseif cmd == "all" then
-        ns:Print(L["%d books delivered (goals: 10, 20)"]:format(ns:DeliveredTotal()))
+        local goals = {}
+        for _, g in ipairs(ns.Goals) do goals[#goals + 1] = g.books end
+        ns:Print(L["%d books delivered (goals: %s)"]:format(ns:DeliveredTotal(), table.concat(goals, ", ")))
         for _, g in ipairs(ns:ZoneList()) do
             for _, mapID in ipairs(g.zones) do
                 local d, f, t = ns:Count(ns:ZoneBooks(mapID))

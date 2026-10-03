@@ -9,7 +9,7 @@ local T
 if locale == "deDE" then
     T = {
         ["%d / %d books delivered"] = "%d / %d B\195\188cher abgegeben",
-        ["%d books delivered (goals: 10, 20)"] = "%d B\195\188cher abgegeben (Ziele: 10, 20)",
+        ["%d books delivered (goals: %s)"] = "%d B\195\188cher abgegeben (Ziele: %s)",
         ["%d books delivered."] = "%d B\195\188cher abgegeben.",
         ["%d library books delivered"] = "%d Bibliotheksb\195\188cher abgegeben",
         ["%d library books missing in %s"] = "%d Bibliotheksb\195\188cher fehlen in %s",
@@ -100,7 +100,7 @@ if locale == "deDE" then
 elseif locale == "esES" or locale == "esMX" then
     T = {
         ["%d / %d books delivered"] = "%d / %d libros entregados",
-        ["%d books delivered (goals: 10, 20)"] = "%d libros entregados (objetivos: 10, 20)",
+        ["%d books delivered (goals: %s)"] = "%d libros entregados (objetivos: %s)",
         ["%d books delivered."] = "%d libros entregados.",
         ["%d library books delivered"] = "%d libros de la biblioteca entregados",
         ["%d library books missing in %s"] = "Faltan %d libros de la biblioteca en %s",
@@ -191,7 +191,7 @@ elseif locale == "esES" or locale == "esMX" then
 elseif locale == "frFR" then
     T = {
         ["%d / %d books delivered"] = "%d / %d livres rendus",
-        ["%d books delivered (goals: 10, 20)"] = "%d livres rendus (objectifs : 10, 20)",
+        ["%d books delivered (goals: %s)"] = "%d livres rendus (objectifs : %s)",
         ["%d books delivered."] = "%d livres rendus.",
         ["%d library books delivered"] = "%d livres de biblioth\195\168que rendus",
         ["%d library books missing in %s"] = "%d livres de biblioth\195\168que manquants : %s",
@@ -282,7 +282,7 @@ elseif locale == "frFR" then
 elseif locale == "koKR" then
     T = {
         ["%d / %d books delivered"] = "%d / %d\234\182\140 \236\160\156\236\182\156 \236\153\132\235\163\140",
-        ["%d books delivered (goals: 10, 20)"] = "%d\234\182\140 \236\160\156\236\182\156 \236\153\132\235\163\140 (\235\170\169\237\145\156: 10, 20)",
+        ["%d books delivered (goals: %s)"] = "%d\234\182\140 \236\160\156\236\182\156 \236\153\132\235\163\140 (\235\170\169\237\145\156: %s)",
         ["%d books delivered."] = "%d\234\182\140 \236\160\156\236\182\156 \236\153\132\235\163\140.",
         ["%d library books delivered"] = "\235\143\132\236\132\156\234\180\128 \236\177\133 %d\234\182\140 \236\160\156\236\182\156 \236\153\132\235\163\140",
         ["%d library books missing in %s"] = "\235\143\132\236\132\156\234\180\128 \236\177\133 %d\234\182\140 \235\175\184\235\176\156\234\178\172: %s",
@@ -373,7 +373,7 @@ elseif locale == "koKR" then
 elseif locale == "ptBR" then
     T = {
         ["%d / %d books delivered"] = "%d / %d livros entregues",
-        ["%d books delivered (goals: 10, 20)"] = "%d livros entregues (metas: 10, 20)",
+        ["%d books delivered (goals: %s)"] = "%d livros entregues (metas: %s)",
         ["%d books delivered."] = "%d livros entregues.",
         ["%d library books delivered"] = "%d livros da biblioteca entregues",
         ["%d library books missing in %s"] = "Faltam %d livros da biblioteca em %s",
@@ -464,7 +464,7 @@ elseif locale == "ptBR" then
 elseif locale == "ruRU" then
     T = {
         ["%d / %d books delivered"] = "\208\161\208\180\208\176\208\189\208\190 \208\186\208\189\208\184\208\179: %d / %d",
-        ["%d books delivered (goals: 10, 20)"] = "\208\161\208\180\208\176\208\189\208\190 \208\186\208\189\208\184\208\179: %d (\209\134\208\181\208\187\208\184: 10, 20)",
+        ["%d books delivered (goals: %s)"] = "\208\161\208\180\208\176\208\189\208\190 \208\186\208\189\208\184\208\179: %d (\209\134\208\181\208\187\208\184: %s)",
         ["%d books delivered."] = "\208\161\208\180\208\176\208\189\208\190 \208\186\208\189\208\184\208\179: %d.",
         ["%d library books delivered"] = "\208\161\208\180\208\176\208\189\208\190 \208\177\208\184\208\177\208\187\208\184\208\190\209\130\208\181\209\135\208\189\209\139\209\133 \208\186\208\189\208\184\208\179: %d",
         ["%d library books missing in %s"] = "\208\157\208\181 \208\189\208\176\208\185\208\180\208\181\208\189\208\190 \208\177\208\184\208\177\208\187\208\184\208\190\209\130\208\181\209\135\208\189\209\139\209\133 \208\186\208\189\208\184\208\179: %d (%s)",
@@ -555,7 +555,7 @@ elseif locale == "ruRU" then
 elseif locale == "zhCN" then
     T = {
         ["%d / %d books delivered"] = "\229\183\178\228\186\164\232\191\152%d / %d\230\156\172",
-        ["%d books delivered (goals: 10, 20)"] = "\229\183\178\228\186\164\232\191\152%d\230\156\172\239\188\136\231\155\174\230\160\135\239\188\15410\227\128\12920\239\188\137",
+        ["%d books delivered (goals: %s)"] = "\229\183\178\228\186\164\232\191\152%d\230\156\172\239\188\136\231\155\174\230\160\135\239\188\154%s\239\188\137",
         ["%d books delivered."] = "\229\183\178\228\186\164\232\191\152%d\230\156\172\227\128\130",
         ["%d library books delivered"] = "\229\183\178\228\186\164\232\191\152%d\230\156\172\229\155\190\228\185\166\233\166\134\232\151\143\228\185\166",
         ["%d library books missing in %s"] = "\232\191\152\230\156\137%d\230\156\172\229\155\190\228\185\166\233\166\134\232\151\143\228\185\166\230\156\170\230\137\190\229\136\176\239\188\154%s",
@@ -646,7 +646,7 @@ elseif locale == "zhCN" then
 elseif locale == "zhTW" then
     T = {
         ["%d / %d books delivered"] = "\229\183\178\231\185\179\228\186\164 %d / %d \230\156\172\230\155\184",
-        ["%d books delivered (goals: 10, 20)"] = "\229\183\178\231\185\179\228\186\164%d\230\156\172\230\155\184\239\188\136\231\155\174\230\168\153\239\188\15410\227\128\12920\239\188\137",
+        ["%d books delivered (goals: %s)"] = "\229\183\178\231\185\179\228\186\164%d\230\156\172\230\155\184\239\188\136\231\155\174\230\168\153\239\188\154%s\239\188\137",
         ["%d books delivered."] = "\229\183\178\231\185\179\228\186\164%d\230\156\172\230\155\184\227\128\130",
         ["%d library books delivered"] = "\229\183\178\231\185\179\228\186\164%d\230\156\172\229\156\150\230\155\184\233\164\168\230\155\184\231\177\141",
         ["%d library books missing in %s"] = "\231\188\186\229\176\145%d\230\156\172\229\156\150\230\155\184\233\164\168\230\155\184\231\177\141\239\188\154%s",
