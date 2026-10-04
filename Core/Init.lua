@@ -10,7 +10,7 @@ local DEFAULTS = {
     mapPinsFound = false,   -- also pin books found but not yet delivered
     tracker = true,         -- objective tracker section
     tomtom = true,          -- waypoints go to TomTom when it is loaded
-    minimap = { hide = false, angle = 200 },
+    minimap = { hide = false, minimapPos = 200 },  -- LibDBIcon's own db (hide, minimapPos)
     window = {},            -- point, x, y
 }
 

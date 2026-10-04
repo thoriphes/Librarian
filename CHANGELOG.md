@@ -1,5 +1,13 @@
 # Librarian
 
+## 1.2.1
+
+- The minimap button now goes through LibDBIcon, so minimap button bags (Leatrix Plus and
+  others) pick it up. It keeps its position.
+- Book data refreshed: flavour text for 11 more books, new player confirmations for
+  Undead Potatoes, Scourge (Plaguewood), The Knight and the Lady (second spot), Demons and You
+  and Legends of the Tidesages, and updated zone level ranges.
+
 ## 1.2.0
 
 - New reward: the third Greater Friend of the Library quest (25 books, level 30) with
