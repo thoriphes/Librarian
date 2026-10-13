@@ -1,5 +1,12 @@
 # Librarian
 
+## 1.2.2
+
+- Ataeric: On Arcane Curiosities is back: players now find it in The Sepulcher (Silverpine
+  Forest), downstairs in the main building beside Sebastian Meloche.
+- Updated note for A Luddite's Guide to Caring for Your Demonic Pet: where the Rusted Cage Key
+  drops.
+
 ## 1.2.1
 
 - The minimap button now goes through LibDBIcon, so minimap button bags (Leatrix Plus and
