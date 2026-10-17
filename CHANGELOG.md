@@ -1,5 +1,11 @@
 # Librarian
 
+## 1.3.0
+
+- New option: Show on continent maps (under World map pins, on by default). Turn it off to keep
+  the pins on zone maps only.
+- New option: Pin size, 50% to 200%, for the world map pins.
+
 ## 1.2.2
 
 - Ataeric: On Arcane Curiosities is back: players now find it in The Sepulcher (Silverpine

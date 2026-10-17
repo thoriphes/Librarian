@@ -11,7 +11,10 @@ local L = ns.L
 local OPTIONS = {
     { key = "toast", label = "Zone toast", tip = "Entering a zone with a missing book shows a toast, once per zone per session." },
     { key = "mapPins", label = "World map pins", tip = "Pins for missing books on zone and continent maps." },
+    { key = "mapPinsContinent", label = "Show on continent maps", tip = "Pins on the continent maps too. Off: zone maps only.", indent = true },
     { key = "mapPinsFound", label = "Also pin books in your bags", tip = "Pin books that are in your bags but not delivered yet.", indent = true },
+    { key = "mapPinSize", label = "Pin size", tip = "Size of the book pins on zone and continent maps.", indent = true,
+        slider = { min = 50, max = 200, step = 10 } },
     { key = "tracker", label = "Objective tracker section", tip = "List the zone's missing books in the objective tracker. Changes apply out of combat." },
     { key = "tomtom", label = "TomTom waypoints", tip = "Waypoints (Add marker, map pins, the tracker) go to TomTom when it is loaded (otherwise Blizzard's map pin)." },
     { key = "minimapHide", label = "Hide the minimap button", tip = "The addon compartment entry stays." },
@@ -31,25 +34,61 @@ local function set(key, value)
     end
 end
 
--- Checkboxes + help text under (x, y) of parent. Returns refresh() (re-reads the settings into
--- the boxes) and the y below the last control.
+local function showTip(owner, o)
+    GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
+    GameTooltip:AddLine(L[o.label])
+    GameTooltip:AddLine(L[o.tip], 1, 1, 1, true)
+    GameTooltip:Show()
+end
+
+local function round(v)
+    return math.floor(v + 0.5)
+end
+
+-- Percent slider row: label where a checkbox's label would sit, Blizzard's stepper slider after
+-- it, value on its right.
+local function buildSlider(parent, o, x, y)
+    local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    label:SetPoint("LEFT", parent, "TOPLEFT", x + (o.indent and 24 or 0) + 30, y - 16)
+    label:SetText(L[o.label])
+    local s = CreateFrame("Frame", nil, parent, "MinimalSliderWithSteppersTemplate")
+    s:SetSize(200, 30)
+    s:SetPoint("LEFT", label, "RIGHT", 6, 0)
+    local right = MinimalSliderWithSteppersMixin.Label.Right
+    s:Init(get(o.key), o.slider.min, o.slider.max, (o.slider.max - o.slider.min) / o.slider.step, {
+        [right] = CreateMinimalSliderFormatter(right, function(v) return ("%d%%"):format(round(v)) end),
+    })
+    s:RegisterCallback(MinimalSliderWithSteppersMixin.Event.OnValueChanged, function(_, v)
+        v = round(v)
+        if v ~= get(o.key) then set(o.key, v) end
+    end, s)
+    s.Slider:HookScript("OnEnter", function(self) showTip(self, o) end)
+    s.Slider:HookScript("OnLeave", function() GameTooltip:Hide() end)
+    return s
+end
+
+local function buildCheckbox(parent, o, x, y)
+    local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+    cb:SetPoint("TOPLEFT", x + (o.indent and 24 or 0), y)
+    local label = cb.Text or cb.text
+    label:SetText(L[o.label])
+    label:SetFontObject("GameFontHighlight")
+    cb:SetScript("OnClick", function(self) set(o.key, self:GetChecked() and true or false) end)
+    cb:SetScript("OnEnter", function(self) showTip(self, o) end)
+    cb:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    return cb
+end
+
+-- Checkboxes, sliders + help text under (x, y) of parent. Returns refresh() (re-reads the
+-- settings into the controls) and the y below the last control.
 function ns:BuildOptionControls(parent, x, y)
-    local boxes = {}
+    local boxes, sliders = {}, {}
     for _, o in ipairs(OPTIONS) do
-        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-        cb:SetPoint("TOPLEFT", x + (o.indent and 24 or 0), y)
-        local label = cb.Text or cb.text
-        label:SetText(L[o.label])
-        label:SetFontObject("GameFontHighlight")
-        cb:SetScript("OnClick", function(self) set(o.key, self:GetChecked() and true or false) end)
-        cb:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:AddLine(L[o.label])
-            GameTooltip:AddLine(L[o.tip], 1, 1, 1, true)
-            GameTooltip:Show()
-        end)
-        cb:SetScript("OnLeave", function() GameTooltip:Hide() end)
-        boxes[o.key] = cb
+        if o.slider then
+            sliders[o.key] = buildSlider(parent, o, x, y)
+        else
+            boxes[o.key] = buildCheckbox(parent, o, x, y)
+        end
         y = y - 30
     end
     local help = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -61,6 +100,7 @@ function ns:BuildOptionControls(parent, x, y)
         .. "/librarian toast - test the toast")
     local function refresh()
         for key, cb in pairs(boxes) do cb:SetChecked(get(key) and true or false) end
+        for key, s in pairs(sliders) do s:SetValue(get(key)) end
     end
     return refresh, y - 14 - help:GetStringHeight()
 end

@@ -8,6 +8,8 @@ local DEFAULTS = {
     toast = true,           -- zone-enter toast
     mapPins = true,         -- world map pins for missing books
     mapPinsFound = false,   -- also pin books found but not yet delivered
+    mapPinsContinent = true, -- pins on the continent maps too (off = zone maps only)
+    mapPinSize = 100,       -- world map pin size, percent
     tracker = true,         -- objective tracker section
     tomtom = true,          -- waypoints go to TomTom when it is loaded
     minimap = { hide = false, minimapPos = 200 },  -- LibDBIcon's own db (hide, minimapPos)

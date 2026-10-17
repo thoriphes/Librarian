@@ -1,6 +1,7 @@
 -- World map pins: a MapCanvas data provider (Forever's world map is retail's MapCanvas).
 -- Zone maps show their books; the Kalimdor / Eastern Kingdoms maps show every book of the
--- continent. Missing books by default, found-not-delivered ones as an option.
+-- continent (an option). Missing books by default, found-not-delivered ones as an option.
+-- Pin size = the mapPinSize option (percent).
 -- Click = waypoint, shift-click = the book's journal page.
 local _, ns = ...
 local L = ns.L
@@ -44,7 +45,10 @@ local function buildPinMixin()
         local c = BORDER[status]
         self.Border:SetVertexColor(c[1], c[2], c[3])
         self.Glow:SetShown(focused)
-        self:SetSize(focused and 28 or 22, focused and 28 or 22)
+        local scale = (ns.db.mapPinSize or 100) / 100
+        local size = math.floor((focused and 28 or 22) * scale + 0.5)
+        self:SetSize(size, size)
+        self.Glow:SetSize(46 * scale, 46 * scale)
     end
 
     function PinMixin:OnMouseEnter()
@@ -113,12 +117,14 @@ local function buildProvider()
                 end
             end
         elseif CONTINENT_IDS[mapID] then
+            -- continent pins off: only a focused book (Show on map) still gets its pin
+            local all = ns.db.mapPinsContinent
             for zoneID, z in pairs(ns.Zones) do
                 if z.continent == mapID then
                     local minX, maxX, minY, maxY = C_Map.GetMapRectOnMap(zoneID, mapID)
                     if minX then
                         for _, e in ipairs(ns.byZone[zoneID] or {}) do
-                            if shouldPin(e.book, e.spot) then
+                            if (all or focused(e.book, e.spot)) and shouldPin(e.book, e.spot) then
                                 map:AcquirePin(TEMPLATE, e.book, e.spot,
                                     minX + (maxX - minX) * e.spot.x / 100,
                                     minY + (maxY - minY) * e.spot.y / 100,
