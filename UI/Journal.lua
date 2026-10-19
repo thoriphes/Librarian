@@ -1020,7 +1020,7 @@ local function refreshRewards()
         else
             status = "|cffffd100" .. L["%d more to go"]:format(goal.books - delivered) .. "|r"
         end
-        -- the quest's own level requirement, until it is turned in (the ring quest needs 20, the third 30)
+        -- the quest's own level requirement, until it is turned in (the ring quest needs 20, the third 35)
         local level = not ns:GoalDone(goal) and levelText(goal.level)
         row.text:SetText(("%s (%d)  %s"):format(ns:QuestTitle(goal.quest, goal.title), goal.books, status)
             .. (level and ("  |cff999999-|r  " .. level) or ""))
