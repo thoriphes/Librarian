@@ -1,5 +1,12 @@
 # Librarian
 
+## 1.3.1
+
+- The third reward goal (25 books) now needs level 35, up from 30, as in the current Forever
+  data.
+- Truthseeker's Bow now shows its level 40 requirement, like the other two rewards of that
+  goal.
+
 ## 1.3.0
 
 - New option: Show on continent maps (under World map pins, on by default). Turn it off to keep
