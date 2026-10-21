@@ -15,7 +15,8 @@ local OPTIONS = {
     { key = "mapPinsFound", label = "Also pin books in your bags", tip = "Pin books that are in your bags but not delivered yet.", indent = true },
     { key = "mapPinSize", label = "Pin size", tip = "Size of the book pins on zone and continent maps.", indent = true,
         slider = { min = 50, max = 200, step = 10 } },
-    { key = "tracker", label = "Objective tracker section", tip = "List the zone's missing books in the objective tracker. Changes apply out of combat." },
+    { key = "tracker", label = "Objective tracker section", tip = "List the zone's missing books in the objective tracker. Changes apply out of combat.",
+        warn = "Warning: can cause Lua errors in combat and stop the objective tracker from updating (Blizzard's tracker does not really allow addon sections). Type /reload after turning it off." },
     { key = "tomtom", label = "TomTom waypoints", tip = "Waypoints (Add marker, map pins, the tracker) go to TomTom when it is loaded (otherwise Blizzard's map pin)." },
     { key = "minimapHide", label = "Hide the minimap button", tip = "The addon compartment entry stays." },
 }
@@ -90,6 +91,14 @@ function ns:BuildOptionControls(parent, x, y)
             boxes[o.key] = buildCheckbox(parent, o, x, y)
         end
         y = y - 30
+        if o.warn then -- red text under the control, always visible (not only in the tooltip)
+            local w = parent:CreateFontString(nil, "OVERLAY", "GameFontRedSmall")
+            w:SetPoint("TOPLEFT", x + 30, y + 4)
+            w:SetWidth(440)
+            w:SetJustifyH("LEFT")
+            w:SetText(L[o.warn])
+            y = y - w:GetStringHeight() - 4
+        end
     end
     local help = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     help:SetPoint("TOPLEFT", x, y - 14)

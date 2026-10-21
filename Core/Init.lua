@@ -10,7 +10,7 @@ local DEFAULTS = {
     mapPinsFound = false,   -- also pin books found but not yet delivered
     mapPinsContinent = true, -- pins on the continent maps too (off = zone maps only)
     mapPinSize = 100,       -- world map pin size, percent
-    tracker = true,         -- objective tracker section
+    tracker = false,        -- objective tracker section (off: it taints Blizzard's tracker, see Systems/Tracker.lua)
     tomtom = true,          -- waypoints go to TomTom when it is loaded
     minimap = { hide = false, minimapPos = 200 },  -- LibDBIcon's own db (hide, minimapPos)
     window = {},            -- point, x, y
@@ -61,6 +61,15 @@ ns:RegisterEvent("ADDON_LOADED", function(_, name)
     if name ~= ADDON then return end
     LibrarianDB = LibrarianDB or {}
     LibrarianCharDB = LibrarianCharDB or {}
+    -- 1.3.2: the tracker section went off by default (it taints Blizzard's tracker); existing
+    -- installs had true saved, so switch it off once. Players can turn it back on.
+    if not LibrarianDB.trackerOffMigrated then
+        if LibrarianDB.tracker then
+            ns:Print(ns.L["The objective tracker section is now off: it can cause Lua errors in combat. Turn it back on in Options if you want it."])
+        end
+        LibrarianDB.tracker = false
+        LibrarianDB.trackerOffMigrated = true
+    end
     applyDefaults(LibrarianDB, DEFAULTS)
     applyDefaults(LibrarianCharDB, { marks = {} })
     ns.db = LibrarianDB

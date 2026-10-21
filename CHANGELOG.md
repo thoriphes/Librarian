@@ -1,5 +1,12 @@
 # Librarian
 
+## 1.3.2
+
+- The objective tracker section is now off by default, with a warning under its checkbox:
+  Blizzard's tracker does not really allow addon sections, so it can cause Lua errors in combat
+  and stop the tracker from updating. Type /reload after turning it off. Existing installs get
+  it switched off once too, with a chat message; turn it back on in Options if you want it.
+
 ## 1.3.1
 
 - The third reward goal (25 books) now needs level 35, up from 30, as in the current Forever

@@ -23,7 +23,8 @@ ones you still need, where they are, and what you get.
   ones in your bags too). Click = waypoint, Shift-click = the book's page.
 - **Zone toast** when you enter a zone with a missing book (once per zone per session).
 - **Objective tracker section** listing the current zone's missing books and the books waiting
-  to be turned in.
+  to be turned in. Off by default: Blizzard's tracker does not really allow addon sections, so it
+  can cause Lua errors in combat.
 - **TomTom** waypoints when TomTom is installed; Blizzard's map pin otherwise.
 - **Automatic detection**: a book is *delivered* once its turn-in quest is completed, *in bags*
   while you carry it. Manual marks (per character) cover a turn-in the game does not report.

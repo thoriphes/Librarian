@@ -1,4 +1,4 @@
--- Objective tracker section (on by default): the current zone's missing books, plus a
+-- Objective tracker section (off by default): the current zone's missing books, plus a
 -- "turn in" block when books sit in the bags. Forever runs retail's modular tracker, so this is
 -- a module like Blizzard's own profession-recipe one: ObjectiveTrackerModuleTemplate +
 -- LayoutContents, added to ObjectiveTrackerFrame through ObjectiveTrackerManager.
