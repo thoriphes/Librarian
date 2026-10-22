@@ -10,6 +10,7 @@ local L = ns.L
 
 local OPTIONS = {
     { key = "toast", label = "Zone toast", tip = "Entering a zone with a missing book shows a toast, once per zone per session." },
+    { key = "toastLocked", label = "Lock the toast", tip = "Off: the toast stays on screen and you can drag it anywhere. Turn it back on to hide it.", indent = true },
     { key = "mapPins", label = "World map pins", tip = "Pins for missing books on zone and continent maps." },
     { key = "mapPinsContinent", label = "Show on continent maps", tip = "Pins on the continent maps too. Off: zone maps only.", indent = true },
     { key = "mapPinsFound", label = "Also pin books in your bags", tip = "Pin books that are in your bags but not delivered yet.", indent = true },

@@ -6,6 +6,8 @@ ns.name = ADDON
 -- Account-wide settings. Per-character manual marks live in LibrarianCharDB.
 local DEFAULTS = {
     toast = true,           -- zone-enter toast
+    toastLocked = true,     -- off: the toast stays up and drags anywhere
+    toastPos = {},          -- point, relPoint, x, y (empty = top centre)
     mapPins = true,         -- world map pins for missing books
     mapPinsFound = false,   -- also pin books found but not yet delivered
     mapPinsContinent = true, -- pins on the continent maps too (off = zone maps only)

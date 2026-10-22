@@ -4,7 +4,9 @@
 -- line + grey lines in FriendsFont_Normal, the toast close button, flair glow, 0.2 s fade in, 7 s
 -- hold, 1.5 s fade out, paused while hovered. Own sound (quest-list open), not the BNet one. Rebuilt with the same parts instead of inheriting
 -- the template: that one is an AlertFrame-managed frame and nothing of Blizzard's alert queue
--- should run our code. Click = open the journal on that zone.
+-- should run our code. Click = open the journal on that zone. Named LibrarianToast; with
+-- "Lock the toast" off it stays on screen (a preview if no real one is up) and drags anywhere,
+-- position saved in ns.db.toastPos.
 local _, ns = ...
 local L = ns.L
 
@@ -28,11 +30,27 @@ local BACKDROP = BACKDROP_TOAST_12_12 or {
 }
 
 local function create()
-    local f = CreateFrame("Button", nil, UIParent, "BackdropTemplate")
+    local f = CreateFrame("Button", "LibrarianToast", UIParent, "BackdropTemplate")
     f:SetSize(WIDTH, MIN_HEIGHT)
-    f:SetPoint("TOP", UIParent, "TOP", 0, -150)
+    local pos = ns.db.toastPos
+    if pos.point then
+        f:SetPoint(pos.point, UIParent, pos.relPoint, pos.x, pos.y)
+    else
+        f:SetPoint("TOP", UIParent, "TOP", 0, -150)
+    end
     f:SetFrameStrata("LOW")
     f:SetToplevel(true)
+    f:SetClampedToScreen(true)
+    f:SetMovable(true)
+    f:RegisterForDrag("LeftButton")
+    f:SetScript("OnDragStart", function(self)
+        if not ns.db.toastLocked then self:StartMoving() end
+    end)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        local p, _, rp, x, y = self:GetPoint(1)
+        ns.db.toastPos = { point = p, relPoint = rp, x = x, y = y }
+    end)
     f:SetBackdrop(BACKDROP)
     f:SetBackdropColor(unpack(BG_TINT))
     f:SetBackdropBorderColor(unpack(BORDER_TINT))
@@ -86,12 +104,14 @@ local function create()
 
     f:RegisterForClicks("LeftButtonUp")
     f:SetScript("OnClick", function(self)
+        if not self.mapID then return end -- the unlock preview
         self:Hide()
         ns:OpenZoneBook(self.mapID)
     end)
-    -- fade in, hold, fade out; the clock stops while the mouse is over the toast (or its X)
+    -- fade in, hold, fade out; the clock stops while the mouse is over the toast (or its X) or
+    -- while it is unlocked
     f:SetScript("OnUpdate", function(self, dt)
-        if self:IsMouseOver() then
+        if self:IsMouseOver() or not ns.db.toastLocked then
             if self.elapsed > FADE_IN then
                 self.elapsed = FADE_IN
                 self:SetAlpha(1)
@@ -114,6 +134,8 @@ local function create()
     return f
 end
 
+local show
+
 -- force = show even if already shown this session or switched off (/librarian toast).
 function ns:ShowZoneToast(mapID, force)
     if not mapID then
@@ -127,10 +149,6 @@ function ns:ShowZoneToast(mapID, force)
         return
     end
     shown[mapID] = true
-    toast = toast or create()
-    toast.mapID = mapID
-    toast.top:SetText(#missing == 1 and L["1 library book missing in %s"]:format(ns:ZoneName(mapID))
-        or L["%d library books missing in %s"]:format(#missing, ns:ZoneName(mapID)))
     local lines = {}
     for i, e in ipairs(missing) do
         if i > 3 then
@@ -139,7 +157,16 @@ function ns:ShowZoneToast(mapID, force)
         end
         lines[#lines + 1] = ("%s (%.1f, %.1f)"):format(ns:BookName(e.book), e.spot.x, e.spot.y)
     end
-    toast.lines:SetText(table.concat(lines, "\n"))
+    show(mapID, #missing == 1 and L["1 library book missing in %s"]:format(ns:ZoneName(mapID))
+        or L["%d library books missing in %s"]:format(#missing, ns:ZoneName(mapID)), table.concat(lines, "\n"))
+end
+
+-- mapID nil = the unlock preview (click does nothing)
+show = function(mapID, top, lines)
+    toast = toast or create()
+    toast.mapID = mapID or false -- false, not nil: the preview
+    toast.top:SetText(top)
+    toast.lines:SetText(lines)
     toast:SetHeight(math.max(MIN_HEIGHT, 10 + toast.top:GetStringHeight() + 4 + toast.lines:GetStringHeight() + 10))
     toast.elapsed = 0
     toast:SetAlpha(0)
@@ -156,6 +183,16 @@ local function check()
         ns:ShowZoneToast(ns:CurrentZone())
     end)
 end
+
+-- Unlocking puts a toast up to drag (unless a real one is already showing); locking puts it away.
+ns:On("SETTING", function(key, value)
+    if key ~= "toastLocked" then return end
+    if value then
+        if toast then toast:Hide() end
+    elseif not (toast and toast:IsShown()) then
+        show(nil, L["Drag to move the toast"], L["Lock it again in Options when done."])
+    end
+end)
 
 ns:On("LOADED", function()
     ns:RegisterEvent("ZONE_CHANGED_NEW_AREA", check)

@@ -1,5 +1,11 @@
 # Librarian
 
+## 1.3.3
+
+- The zone toast can be moved: untick "Lock the toast" in Options (under Zone toast) and drag
+  it anywhere. While unlocked it stays on screen (with a placeholder if no toast is showing);
+  tick it again when done. The position is saved. Locked by default, at the same spot as before.
+
 ## 1.3.2
 
 - The objective tracker section is now off by default, with a warning under its checkbox:
