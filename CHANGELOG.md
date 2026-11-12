@@ -1,5 +1,13 @@
 # Librarian
 
+## Unreleased
+
+- Entering Blackrock Mountain now shows its own zone toast for the books inside it ("Magma or
+  Lava?" and "Stonewrought Design"). Forever has no Blackrock Mountain map, so their pins stay on
+  the Burning Steppes map.
+- "Magma or Lava?": the pin moved to the Molten Core entrance inside Blackrock Mountain (26, 22,
+  from a player report), and its note now mentions both reported spots.
+
 ## 1.3.3
 
 - The zone toast can be moved: untick "Lock the toast" in Options (under Zone toast) and drag

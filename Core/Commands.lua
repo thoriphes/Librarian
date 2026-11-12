@@ -95,7 +95,7 @@ SlashCmdList.LIBRARIAN = function(msg)
             print(("  %s: %s"):format(g.title, table.concat(names, " / ")))
         end
     elseif cmd == "toast" then
-        ns:ShowZoneToast(ns:CurrentZone(), true)
+        ns:ShowToastHere(true)
     elseif cmd == "options" or cmd == "config" then
         ns:OpenOptions()
     else

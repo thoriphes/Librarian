@@ -136,19 +136,41 @@ end
 
 local show
 
+-- Zones the game has but Forever has no map for: area ID -> the map their books are pinned on.
+-- Blackrock Mountain (AreaTable 25, a top-level zone) has no UiMap on Forever (1.60.1.70888), so its
+-- books sit on the Burning Steppes map; inside it, the zone name tells us where we are.
+local AREA_ZONES = { [25] = 1428 }
+
+-- area ID when the player is inside one of AREA_ZONES, else nil
+local function currentArea()
+    local zone = GetZoneText()
+    for area in pairs(AREA_ZONES) do
+        if zone == C_Map.GetAreaInfo(area) then return area end
+    end
+end
+
 -- force = show even if already shown this session or switched off (/librarian toast).
-function ns:ShowZoneToast(mapID, force)
+-- area = only that area's books (AREA_ZONES), named after the area; mapID is then its map.
+function ns:ShowZoneToast(mapID, force, area)
     if not mapID then
         if force then ns:Print(L["no library books in this zone."]) end
         return
     end
-    if not force and (shown[mapID] or not ns.db.toast) then return end
-    local missing = ns:ZoneMissing(mapID)
+    local key = area and ("area" .. area) or mapID
+    if not force and (shown[key] or not ns.db.toast) then return end
+    local missing, name = ns:ZoneMissing(mapID), ns:ZoneName(mapID)
+    if area then
+        local kept = {}
+        for _, e in ipairs(missing) do
+            if e.spot.area == area then kept[#kept + 1] = e end
+        end
+        missing, name = kept, C_Map.GetAreaInfo(area) or name
+    end
     if #missing == 0 then
-        if force then ns:Print(L["%s: no missing books."]:format(ns:ZoneName(mapID))) end
+        if force then ns:Print(L["%s: no missing books."]:format(name)) end
         return
     end
-    shown[mapID] = true
+    shown[key] = true
     local lines = {}
     for i, e in ipairs(missing) do
         if i > 3 then
@@ -157,8 +179,15 @@ function ns:ShowZoneToast(mapID, force)
         end
         lines[#lines + 1] = ("%s (%.1f, %.1f)"):format(ns:BookName(e.book), e.spot.x, e.spot.y)
     end
-    show(mapID, #missing == 1 and L["1 library book missing in %s"]:format(ns:ZoneName(mapID))
-        or L["%d library books missing in %s"]:format(#missing, ns:ZoneName(mapID)), table.concat(lines, "\n"))
+    show(mapID, #missing == 1 and L["1 library book missing in %s"]:format(name)
+        or L["%d library books missing in %s"]:format(#missing, name), table.concat(lines, "\n"))
+end
+
+-- The toast for where the player stands (zone change, /librarian toast).
+function ns:ShowToastHere(force)
+    local area = currentArea()
+    if area then return ns:ShowZoneToast(AREA_ZONES[area], force, area) end
+    ns:ShowZoneToast(ns:CurrentZone(), force)
 end
 
 -- mapID nil = the unlock preview (click does nothing)
@@ -180,7 +209,7 @@ end
 local function check()
     -- The map can report the old zone for a moment after a loading screen.
     C_Timer.After(2, function()
-        ns:ShowZoneToast(ns:CurrentZone())
+        ns:ShowToastHere()
     end)
 end
 

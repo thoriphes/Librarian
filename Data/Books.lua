@@ -369,7 +369,7 @@ ns.Books = {
         item = 228133, quest = 84396, tier = 60, trainer = true, extra = true,
         name = "Magma or Lava?",
         spots = {
-            { map = 1428, x = 29.0, y = 28.9, area = 25, place = "Blackrock Mountain", note = "Inside Blackrock Mountain on a platform before the Blackrock Depths entrance, not in the instance: 48.4, 63.6 on the Blackrock Mountain map. The pin marks the mountain, not the book." },
+            { map = 1428, x = 26.0, y = 22.0, area = 25, place = "Blackrock Mountain", note = "Inside Blackrock Mountain, not in an instance: down by the Molten Core entrance, where a player found it in November 2026. An older report puts it on a platform before the Blackrock Depths entrance." },
         },
     },
     {
