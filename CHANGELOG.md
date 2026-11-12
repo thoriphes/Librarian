@@ -1,6 +1,6 @@
 # Librarian
 
-## Unreleased
+## 1.3.4
 
 - Entering Blackrock Mountain now shows its own zone toast for the books inside it ("Magma or
   Lava?" and "Stonewrought Design"). Forever has no Blackrock Mountain map, so their pins stay on
