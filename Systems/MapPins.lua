@@ -3,8 +3,31 @@
 -- continent (an option). Missing books by default, found-not-delivered ones as an option.
 -- Pin size = the mapPinSize option (percent).
 -- Click = waypoint, shift-click = the book's journal page.
+--
+-- OpenMap (one stitched world map): the map underneath follows the view (world, continent,
+-- zone) and its canvas shows past that map's edges, so placing books for the map underneath
+-- only made them come and go with every zoom, and left the neighbouring zones empty. While it
+-- stitches, every book is placed through OpenMapAPI onto whatever map is underneath, and the
+-- pins are lifted above its art (they are made under it).
 local _, ns = ...
 local L = ns.L
+
+-- OpenMapAPI while OpenMap shows its stitched map (major 1, version 2+: ArtTopLevel); nil otherwise
+local function stitched()
+    local api = _G.OpenMapAPI
+    if type(api) ~= "table" or api.major ~= 1 or (tonumber(api.version) or 0) < 2 then return end
+    local ok, on = pcall(api.IsStitched)
+    if ok and on then return api end
+end
+
+-- Above OpenMap's art while it stitches. A frame level change on the map is restricted in combat:
+-- skipped then, done again as combat ends (PLAYER_REGEN_ENABLED below).
+local function liftAboveArt(pin)
+    local api = stitched()
+    if not api or InCombatLockdown() then return end
+    local top = api.ArtTopLevel()
+    if type(top) == "number" and pin:GetFrameLevel() <= top then pin:SetFrameLevel(top + 2) end
+end
 
 local TEMPLATE = "LibrarianBookPinTemplate"
 local CONTINENT_IDS = { [1414] = true, [1415] = true }
@@ -49,6 +72,10 @@ local function buildPinMixin()
         local size = math.floor((focused and 28 or 22) * scale + 0.5)
         self:SetSize(size, size)
         self.Glow:SetSize(46 * scale, 46 * scale)
+        -- Blizzard's level first (a pin lifted on the stitched map, reused on Blizzard's own map,
+        -- goes back down), then above OpenMap's art if it stitches
+        if self.ApplyFrameLevel then self:ApplyFrameLevel() end
+        liftAboveArt(self)
     end
 
     function PinMixin:OnMouseEnter()
@@ -97,6 +124,29 @@ local function shouldPin(book, spot)
     return s == ns.MISSING or (s == ns.FOUND and ns.db.mapPinsFound)
 end
 
+-- The stitched map: every book, from its own zone through OpenMap's world onto the map
+-- underneath (positions past 0..1 are on the canvas beyond that map, which OpenMap shows).
+-- Zoomed out to a continent or the world, "Show on continent maps" still decides, as on
+-- Blizzard's continent maps; zoomed in, the neighbouring zones' books show with the zone's.
+local function refreshStitched(map, mapID, api)
+    local info = C_Map.GetMapInfo(mapID)
+    local continentType = Enum and Enum.UIMapType and Enum.UIMapType.Continent or 2
+    local wide = CONTINENT_IDS[mapID] or not (info and info.mapType) or info.mapType <= continentType
+    local all = not wide or ns.db.mapPinsContinent
+    for zoneID, list in pairs(ns.byZone) do
+        for _, e in ipairs(list) do
+            if (all or focused(e.book, e.spot)) and shouldPin(e.book, e.spot) then
+                local u, v = api.WorldFromMap(zoneID, e.spot.x / 100, e.spot.y / 100)
+                local x, y
+                if u then x, y = api.MapFromWorld(mapID, u, v) end
+                if x then
+                    map:AcquirePin(TEMPLATE, e.book, e.spot, x, y, (ns:Status(e.book)), focused(e.book, e.spot))
+                end
+            end
+        end
+    end
+end
+
 local function buildProvider()
     provider = CreateFromMixins(MapCanvasDataProviderMixin)
 
@@ -109,7 +159,12 @@ local function buildProvider()
         local map = self:GetMap()
         local mapID = map:GetMapID()
         if not mapID then return end
-        if ns.Zones[mapID] then
+        local api = stitched()
+        if api then
+            refreshStitched(map, mapID, api)
+            -- (again once acquired: AcquirePin may set the level itself after OnAcquired)
+            for pin in map:EnumeratePinsByTemplate(TEMPLATE) do liftAboveArt(pin) end
+        elseif ns.Zones[mapID] then
             for _, e in ipairs(ns.byZone[mapID] or {}) do
                 if shouldPin(e.book, e.spot) then
                     map:AcquirePin(TEMPLATE, e.book, e.spot, e.spot.x / 100, e.spot.y / 100,
@@ -153,7 +208,17 @@ local function setup()
     buildPinMixin()
     buildProvider()
     WorldMapFrame:AddDataProvider(provider)
+    -- OpenMap switching between its stitched map and Blizzard's (no map change of its own then)
+    local api = _G.OpenMapAPI
+    if type(api) == "table" and api.major == 1 and type(api.RegisterCallback) == "function" then
+        api.RegisterCallback(ns, "OpenMap_StitchedChanged", function() ns:RefreshMapPins() end)
+    end
 end
+
+-- pins placed in combat on the stitched map could not be lifted above its art: now they can
+ns:RegisterEvent("PLAYER_REGEN_ENABLED", function()
+    if stitched() then ns:RefreshMapPins() end
+end)
 
 ns:On("LOADED", function()
     if WorldMapFrame then
