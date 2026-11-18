@@ -1,5 +1,14 @@
 # Librarian
 
+## Unreleased
+
+- OpenMap support: on OpenMap's stitched world map the book pins no longer appear and disappear
+  as you zoom. OpenMap swaps the map underneath (world, continent, zone) as the view moves, and
+  the pins only followed that map; now every book is placed through OpenMap's API onto whatever
+  map is underneath, so the neighbouring zones' books show too. "Show on continent maps" still
+  decides what shows when zoomed out to a continent or the world. The pins are also lifted above
+  OpenMap's map art. Nothing changes without OpenMap, or on Blizzard's own map.
+
 ## 1.3.4
 
 - Entering Blackrock Mountain now shows its own zone toast for the books inside it ("Magma or

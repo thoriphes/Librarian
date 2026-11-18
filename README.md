@@ -26,6 +26,8 @@ ones you still need, where they are, and what you get.
   to be turned in. Off by default: Blizzard's tracker does not really allow addon sections, so it
   can cause Lua errors in combat.
 - **TomTom** waypoints when TomTom is installed; Blizzard's map pin otherwise.
+- **OpenMap** support: on its stitched world map every book is pinned, in the neighbouring zones
+  too, and the pins stay as you zoom in and out.
 - **Automatic detection**: a book is *delivered* once its turn-in quest is completed, *in bags*
   while you carry it. Manual marks (per character) cover a turn-in the game does not report.
 - **Localised**: English, German, Spanish (esES / esMX), French, Korean, Brazilian Portuguese,

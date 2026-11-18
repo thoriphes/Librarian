@@ -18,6 +18,7 @@
 ## IconTexture: Interface\Icons\INV_Misc_Book_12
 ## SavedVariables: LibrarianDB
 ## SavedVariablesPerCharacter: LibrarianCharDB
+## OptionalDeps: OpenMap
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
